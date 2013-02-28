@@ -1,0 +1,71 @@
+$gutter: 3%;
+
+// breakpoints
+$phone: 480px;
+$device: 767px;
+$lap: 979px;
+$desk: 1200px;
+
+/**
+ * 1. Allow the grid system to be used on lists.
+ * 2. Remove any margins and paddings that might affect the grid system.
+ * 3. Apply a negative `margin-left` to negate the columns’ gutters.
+ * 4. Remove whitespace caused by `inline-block` elements.
+ */
+.grid {
+  list-style: none; /* [1] */
+  margin: 0; /* [2] */
+  padding: 0; /* [2] */
+  margin-left: -$gutter; /* [3] */
+  letter-spacing: -0.31em; /* [4] */
+  word-spacing: -0.43em; /* [4] */
+}
+
+/**
+ * 1. Cause columns to stack side-by-side.
+ * 2. Space columns apart.
+ * 3. Align columns to the tops of each other.
+ * 4. Reinstate removed whitespace.
+ * 5. Required to combine fluid widths and fixed gutters.
+ * 6. Default grid item size (for mobile-first usage).
+ */
+.gi {
+  display: inline-block; /* [1] */
+  padding-left: $gutter; /* [2] */
+  vertical-align: top; /* [3] */
+  letter-spacing: normal; /* [4] */
+  word-spacing: normal; /* [4] */
+  -webkit-box-sizing: border-box; /* [5] */
+  -moz-box-sizing: border-box; /* [5] */
+  box-sizing: border-box; /* [5] */
+  width: 100%; /* [6] */
+}
+
+// explode all widths / visibilities
+@mixin device-type($name: "") {
+  %#{$name}full { width: 100%; }
+
+  %#{$name}hidden { display: none !important; }
+  %#{$name}visible { display: inherit; }
+
+  @each $of in 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 24 {
+    @for $i from 1 through $of {
+      %#{$name}#{$i}-#{$of} { width: percentage($i/$of); }
+    }
+  }
+}
+
+@mixin device-media($name, $declaration, $font-size: 100%) {
+  @media only screen and (#{$declaration}) {
+    html { font-size: $font-size; }
+
+    @include device-type('#{$name}-');
+  }
+}
+
+@include device-type("s-");
+@include device-media("device", "max-width: #{$device}", 87.5%);
+@include device-media("phone", "max-width: #{$phone}", 75%);
+@include device-media("lap", "min-width: #{$device+1}) and (max-width: #{$lap}", 87.5%);
+@include device-media("desk", "min-width: #{$lap+1}");
+@include device-media("large", "min-width: #{$desk}", 125%);
